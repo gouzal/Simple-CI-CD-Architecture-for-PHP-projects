@@ -54,26 +54,28 @@ Edit the `/var/lib/pgsql/9.6/data/pg_hba.conf` to enable MD5-based authenticatio
 sudo nano /var/lib/pgsql/9.6/data/pg_hba.conf
 ```
 Find the following lines and change `peer` to `trust` and `idnet` to `md5`.
+```
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
 
-#### TYPE  DATABASE        USER            ADDRESS                 METHOD
-
-#### "local" is for Unix domain socket connections only
+# "local" is for Unix domain socket connections only
 local   all             all                                     peer
-#### IPv4 local connections:
+# IPv4 local connections:
 host    all             all             127.0.0.1/32            ident
-#### IPv6 local connections:
+# IPv6 local connections:
 host    all             all             ::1/128                 ident  
+```
 
 Once updated, the configuration should look like the one shown below.
+```
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
 
-#### TYPE  DATABASE        USER            ADDRESS                 METHOD
-
-#### "local" is for Unix domain socket connections only
+# "local" is for Unix domain socket connections only
 local   all             all                                     trust
-#### IPv4 local connections:
+# IPv4 local connections:
 host    all             all             127.0.0.1/32            md5
-#### IPv6 local connections:
+# IPv6 local connections:
 host    all             all             ::1/128                 md5  
+```
 
 Start PostgreSQL server and enable it to start automatically at boot time by running:
 ```
