@@ -214,6 +214,63 @@ http://[IP]:9000 or http://domain.tld:9000
 ```
 
 Log in using the initial administrator account, admin and admin. You can now use SonarQube to continuously analyze the code you have written.
+## Install GitLab
+GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and CI/CD pipeline features, using an open-source license, developed by GitLab Inc.
+### Step 1: Install and configure the necessary dependencies
+On CentOS 7 (and RedHat/Oracle/Scientific Linux 7), the commands below will also open HTTP and SSH access in the system firewall.
+```
+sudo yum install -y curl policycoreutils-python openssh-server
+sudo systemctl enable sshd
+sudo systemctl start sshd
+sudo firewall-cmd --permanent --add-service=http
+sudo systemctl reload firewalld
+```
+Next, install Postfix to send notification emails. If you want to use another solution to send emails please skip this step and configure an external SMTP server after GitLab has been installed.
+```
+sudo yum install postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+```
+During Postfix installation a configuration screen may appear. Select 'Internet Site' and press enter. Use your server's external DNS for 'mail name' and press enter. If additional screens appear, continue to press enter to accept the defaults.
+### Step 2: Add the GitLab package repository and install the package
+Add the GitLab package repository.
+```
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+```
+
+Next, install the GitLab package. Change https://gitlab.example.com to the URL at which you want to access your GitLab instance. Installation will automatically configure and start GitLab at that URL.
+
+For https:// URLs GitLab will automatically request a certificate with Let's Encrypt, which requires inbound HTTP access and a valid hostname. You can also use your own certificate or just use http://.
+```
+sudo EXTERNAL_URL="https://gitlab.example.com" yum install -y gitlab-ee
+```
+Or you can edit directly the GitLab config file:
+```
+sudo nano /etc/gitlab/gitlab.rb
+```
+change the URL to your `domain` or `IP` and add the `Port` you want to use to access to the git lab.  
+Note : change `https` to `http` if you don't want to use `HTTPS`
+```
+external_url 'http://207.180.197.78:8081'
+```
+and add :
+```
+nginx['redirect_http_to_https'] = false
+```
+and uncomment this line to enable which is a Rack HTTP server to serve Ruby web applications on UNIX environment. It is optimised to be used with nginx:
+```
+unicorn['port'] = 8083
+```
+
+
+### Step 3: Browse to the hostname and login
+GitLab is installed on your server, access at the following address.
+```
+http://[IP]:8081 or http://domain.tld:8081
+```
+On your first visit, you'll be redirected to a password reset screen. Provide the password for the initial administrator account and you will be redirected back to the login screen. Use the default account's username root to login.
+
+
 
 ----
 
