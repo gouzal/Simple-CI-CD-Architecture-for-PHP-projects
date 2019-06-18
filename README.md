@@ -114,8 +114,107 @@ Exit from the psql shell:
 ```
 \q
 ```
-
 Switch back to the sudo user by running the exit command.
+
+### Step 4: Download and configure SonarQube
+Download the SonarQube installer files archive.
+```
+wget https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-6.4.zip
+```
+You can always look for the link to the latest version of the application on the SonarQube download page.
+
+Install unzip by running:
+```
+sudo yum -y install unzip
+```
+Unzip the archive using the following command.
+```
+sudo unzip sonarqube-6.4.zip -d /opt
+```
+Rename the directory:
+```
+sudo mv /opt/sonarqube-6.4 /opt/sonarqube
+```
+Open the SonarQube configuration file using your favorite text editor.
+```
+sudo nano /opt/sonarqube/conf/sonar.properties
+```
+Find the following lines.
+```
+#sonar.jdbc.username=
+#sonar.jdbc.password=
+```
+Uncomment and provide the PostgreSQL username and password of the database that we have created earlier. It should look like:
+```
+sonar.jdbc.username=sonar
+sonar.jdbc.password=StrongPassword
+```
+Next, find:
+```
+#sonar.jdbc.url=jdbc:postgresql://localhost/sonar
+```
+Uncomment the line, save the file and exit from the editor.
+
+### Step 5: Configure Systemd service
+SonarQube can be started directly using the startup script provided in the installer package. As a matter of convenience, you should setup a Systemd unit file for SonarQube.
+```
+sudo nano /etc/systemd/system/sonar.
+```
+Populate the file with:
+```
+[Unit]
+Description=SonarQube service
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+
+User=root
+Group=root
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+Start the application by running:
+```
+sudo systemctl start sonar
+```
+Enable the SonarQube service to automatically start at boot time.
+```
+sudo systemctl enable sonar
+```
+To check if the service is running, run:
+```
+sudo systemctl status sonar
+```
+### Step 5: Configure firewall
+Allow the required HTTP port through the system firewall.
+```
+sudo firewall-cmd --add-service=http --permanent
+sudo firewall-cmd --reload
+```
+
+Start the SonarQube service:
+```
+sudo systemctl start sonar
+```
+
+You will also need to disable SELinux:
+```
+sudo setenforce 0
+```
+
+SonarQube is installed on your server, access the dashboard at the following address.
+```
+http://[IP]:9000 or http://domain.tld:9000
+```
+
+Log in using the initial administrator account, admin and admin. You can now use SonarQube to continuously analyze the code you have written.
+
 ----
 
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
