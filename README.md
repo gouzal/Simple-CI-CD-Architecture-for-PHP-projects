@@ -119,7 +119,7 @@ Switch back to the sudo user by running the exit command.
 ### Step 4: Download and configure SonarQube
 Download the SonarQube installer files archive.
 ```
-wget https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-6.4.zip
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.7.zip
 ```
 You can always look for the link to the latest version of the application on the SonarQube download page.
 
