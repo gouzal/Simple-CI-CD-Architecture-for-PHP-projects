@@ -270,6 +270,78 @@ http://[IP]:8081 or http://domain.tld:8081
 ```
 On your first visit, you'll be redirected to a password reset screen. Provide the password for the initial administrator account and you will be redirected back to the login screen. Use the default account's username root to login.
 
+## Install Jenkins
+Jenkins is an open source, Java-based automation server that offers an easy way to set up a continuous integration and continuous delivery (CI/CD) pipeline.
+
+Continuous integration (CI) is a DevOps practice in which team members regularly commit their code changes to the version control repository, after which automated builds and tests are run. Continuous delivery (CD) is a series of practices where code changes are automatically built, tested and deployed to production.
+
+This tutorial, will walk you through the steps of installing Jenkins on a CentOS 7 system using the official Jenkins repository
+### Prerequisites
+Before continuing with this tutorial, make sure you are logged in as a user with sudo privileges.
+
+### Step 1: Install Java
+Jenkins is a Java application, so the first step is to install Java.
+Note: we have already installed it in previous steps.
+
+### Step 2: enable Jenkins repository
+The next step is to enable the Jenkins repository. To do that, import the GPG key using the following curl command:
+```
+curl --silent --location http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo
+```
+And add the repository to your system with:
+```
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+```
+### Step 3: Installation
+
+Once the repository is enabled, install the latest stable version of Jenkins by typing:
+```
+sudo yum install jenkins
+```
+After the installation process is completed, start the Jenkins service with:
+```
+sudo systemctl start jenkins
+```
+To check whether it started successfully run:
+```
+systemctl status jenkins
+```
+You should see something similar to this:
+```
+● jenkins.service - LSB: Jenkins Automation Server
+Loaded: loaded (/etc/rc.d/init.d/jenkins; bad; vendor preset: disabled)
+Active: active (running) since Thu 2018-09-20 1421 UTC; 15s ago
+    Docs: man:systemd-sysv-generator(8)
+Process: 2367 ExecStart=/etc/rc.d/init.d/jenkins start (code=exited, status=0/SUCCESS)
+CGroup: /system.slice/jenkins.service
+```
+Finally enable the Jenkins service to start on system boot.
+```
+sudo systemctl enable jenkins
+```
+output
+```
+jenkins.service is not a native service, redirecting to /sbin/chkconfig.
+Executing /sbin/chkconfig jenkins on
+```
+### Step 4: Adjust the Firewall
+If you are installing Jenkins on a remote CentOS server that is protected by a firewall you need to port 8080.
+
+Use the following commands to open the necessary port:
+
+```
+sudo firewall-cmd --permanent --zone=public --add-port=8080/tcp
+sudo firewall-cmd --reload
+```
+### Step 5: now you can access 
+To set up your new Jenkins installation, open your browser and type your domain or IP address followed by port 8080:
+```
+http://your_ip_or_domain:8080
+```
+A screen  will appear, so just follow the instructions to complete Jenkins setup.
+
+### Finally
+ navigate to  [Jenkins documentation page]( https://jenkins.io/doc/ "Jenkins documentation page") and start exploring Jenkins’s workflow and plug-in model.
 
 
 ----
